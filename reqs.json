@@ -1,0 +1,84 @@
+
+[
+    {
+        "name": "First-Year Course",
+        "amount": 1,
+        "req_type": "Major Requirement"
+    },
+    {
+        "name": "Programming Course",
+        "amount": 1,
+        "req_type": "Major Requirement"
+    },
+    {
+        "name": "Core Courses",
+        "amount": 7,
+        "req_type": "Major Requirement"
+    },
+    {
+        "name": "Programming Course",
+        "amount": 1,
+        "req_type": "Major Requirement"
+    },
+    {
+        "name": "Upper Level Electives",
+        "amount": 1,
+        "req_type": "Major Requirement"
+    },
+    {
+        "name": "Capstone",
+        "amount": 1,
+        "req_type": "Major Requirement"
+    },
+    {
+        "name": "Quantitative: Mathematics",
+        "amount": 2,
+        "req_type": "General Education Requirement"
+    },
+    {
+        "name": "Quantitative: Statistics",
+        "amount": 1,
+        "req_type": "General Education Requirement"
+    },
+    {
+        "name": "Diversity",
+        "amount": 1,
+        "req_type": "General Education Requirement"
+        
+    },
+    {
+        "name": "Ethical and Policy Context",
+        "amount": 1,
+        "req_type": "General Education Requirement"
+    },
+    {
+        "name": "Expression: Communications",
+        "amount": 1,
+        "req_type": "General Education Requirement"
+    },
+    {
+        "name": "Expression: Composition",
+        "amount": 1,
+        "req_type": "General Education Requirement"
+    },
+    {
+        "name": "Expression: Technical, Business, or Reseach",
+        "amount": 1,
+        "req_type": "General Education Requirement"
+    },
+    {
+        "name": "Global Awareness | Social Sciences | Humansitic Context",
+        "amount": 5,
+        "req_type": "General Education Requirement"
+    },   
+    {
+        "name": "Scientific Context: Sequenced",
+        "amount": 2,
+        "req_type": "General Education Requirement"
+    },   
+    {
+        "name": "Scientific Context: Non-Sequenced",
+        "amount": 1,
+        "req_type": "General Education Requirement"
+    }   
+]
