@@ -4,6 +4,9 @@ import mongoose from "mongoose";
 import { config } from "dotenv";
 import fs from "fs";
 
+// old-style imports
+//var session = require('express-session')
+
 
 // Init the app and express with some setup
 const app = express();
@@ -41,8 +44,24 @@ app.get("/", (req, res) => {
 
 //User Register Route
 app.get('/register', (req, res) => {
-  res.render('register');
-}); 
+  res.render('register', {errors: null});
+});
+
+app.post('/register', (req, res) => {
+  const body = req.body;
+
+    // check for errors 
+    let errs = [];
+
+  if (req.body.password != req.body.password2) {
+    errs.push('Passwords do not match');
+  }
+
+  if (errs.length > 0){
+    res.render('register', {errors: errs})
+  }
+
+});
 
 app.get('/json', (req, res) => {
 
@@ -59,11 +78,21 @@ app.get('/json', (req, res) => {
 
 }); 
 
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
+});
 
+app.get('/dashboard', (req, res) => {
 
+  // read reqs 
 
+  // read person 
 
+  // compare person's classes to reqs
 
+  // create a object that holds the progress of each req for this person
+  
+  // render our ejs with this object
 
-
-
+});
