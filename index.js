@@ -2,6 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import { config } from "dotenv";
+import fs from "fs";
 
 
 // Init the app and express with some setup
@@ -41,6 +42,21 @@ app.get("/", (req, res) => {
 //User Register Route
 app.get('/register', (req, res) => {
   res.render('register');
+}); 
+
+app.get('/json', (req, res) => {
+
+
+  fs.readFile('reqs.json', (err, data) => {
+      if (err) throw err;
+      let student = JSON.parse(data);
+      student.forEach(element => {
+        console.log(element.name)
+      });
+  });
+  
+  console.log('This is after the read call');
+
 }); 
 
 
