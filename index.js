@@ -2,12 +2,9 @@
 import express from "express";
 import mongoose from "mongoose";
 import { config } from "dotenv";
-<<<<<<< HEAD
 import { User } from './models/User.js';
 import bcrypt from 'bcryptjs';
-=======
 import fs from "fs";
->>>>>>> b813ccbefc717a7165a4efacc78293839223ef8b
 
 
 // Init the app and express with some setup
