@@ -92,24 +92,9 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.get('/json', (req, res) => {
-
-
-  fs.readFile('reqs.json', (err, data) => {
-      if (err) throw err;
-      let student = JSON.parse(data);
-      student.forEach(element => {
-        console.log(element.name)
-      });
-  });
-  
-  console.log('This is after the read call');
-
-}); 
-
 app.get('/logout', (req, res) => {
   req.session.destroy();
-  res.redirect('/');
+  res.redirect('/', { errors: null, success: 'Successfully logged out' });
 });
 
 app.get('/dashboard', (req, res) => {
@@ -125,3 +110,19 @@ app.get('/dashboard', (req, res) => {
   // render our ejs with this object
 
 });
+
+app.get('/json', (req, res) => {
+
+
+  fs.readFile('reqs.json', (err, data) => {
+    if (err) throw err;
+    let student = JSON.parse(data);
+    student.forEach(element => {
+      console.log(element.name)
+    });
+  });
+
+  console.log('This is after the read call');
+
+});
+
