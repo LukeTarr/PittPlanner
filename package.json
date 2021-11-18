@@ -10,6 +10,7 @@
   "author": "Luke Tarr & Ibrahim Albaba",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",

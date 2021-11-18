@@ -2,6 +2,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import { config } from "dotenv";
+import { User } from './models/User.js';
+import bcrypt from 'bcryptjs';
 
 // old-style imports
 //var session = require('express-session')
@@ -38,28 +40,55 @@ mongoose
   });
 
 app.get("/", (req, res) => {
-    res.render('index');
+  res.render('index', { errors: null, success: null });
 });
 
 //User Register Route
 app.get('/register', (req, res) => {
-  res.render('register', {errors: null});
+  res.render('register', { errors: null });
 });
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
   const body = req.body;
 
-    // check for errors 
-    let errs = [];
+  // check for errors 
+  let errs = [];
 
   if (req.body.password != req.body.password2) {
     errs.push('Passwords do not match');
   }
 
-  if (errs.length > 0){
-    res.render('register', {errors: errs})
-  }
+  if (errs.length > 0) {
+    res.render('register', { errors: errs })
+  } else {
+    User.findOne({ email: req.body.email }).then(user => {
+      if (user) {
+        errs.push('User with that email already exists');
+        res.render('register', { errors: errs })
+      } else {
+        const newUser = new User({
+          email: req.body.email,
+          password: req.body.password
+        });
 
+        // generate a password hash so we aren't storing raw text password in db
+        bcrypt.genSalt(10, (error, salt) => {
+          bcrypt.hash(newUser.password, salt, (error, hash) => {
+            if (error) throw error;
+            newUser.password = hash;
+            // save the user to db, return user to login page
+            newUser.save().then(user => {
+              res.render('index', { errors: null, success: 'Successfully register, you can now log in' });
+            })
+              .catch(error => {
+                console.log(error);
+                return;
+              });
+          });
+        });
+      }
+    });
+  }
 });
 
 app.get('/logout', (req, res) => {
@@ -76,7 +105,7 @@ app.get('/dashboard', (req, res) => {
   // compare person's classes to reqs
 
   // create a object that holds the progress of each req for this person
-  
+
   // render our ejs with this object
 
 });

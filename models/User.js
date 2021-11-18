@@ -12,10 +12,10 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    classes : {
+    classes: {
         type: [Object],
         required: false
     }
 })
 
-mongoose.model("User", UserSchema);
+export const User = mongoose.model("User", UserSchema);

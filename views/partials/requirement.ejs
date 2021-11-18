@@ -1,71 +1,71 @@
 <%- include('partials/nav.ejs') %>
-<div class="album py-5 bg-light">
+  <div class="album py-5 bg-light">
     <div class="container">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="mb-0">CS 401</p>
-                        <small class="text-muted">3 Credits</small>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="mb-0">CS 401</p>
-                        <small class="text-muted">3 Credits</small>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="mb-0">CS 401</p>
-                        <small class="text-muted">3 Credits</small>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="mb-0">CS 401</p>
-                        <small class="text-muted">3 Credits</small>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="mb-0">CS 401</p>
-                        <small class="text-muted">3 Credits</small>
-                    </div>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">4 Classes Required</small>
-                </div>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <div class="d-flex justify-content-between align-items-center">
+                <p class="mb-0">CS 401</p>
+                <small class="text-muted">3 Credits</small>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <p class="mb-0">CS 401</p>
+                <small class="text-muted">3 Credits</small>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <p class="mb-0">CS 401</p>
+                <small class="text-muted">3 Credits</small>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <p class="mb-0">CS 401</p>
+                <small class="text-muted">3 Credits</small>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <p class="mb-0">CS 401</p>
+                <small class="text-muted">3 Credits</small>
               </div>
             </div>
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">Last updated 3 mins ago</small>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">Last updated 3 mins ago</small>
-                </div>
-              </div>
+            <div class="card-footer">
+              <small class="text-muted">4 Classes Required</small>
             </div>
           </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+            </div>
+            <div class="card-footer">
+              <small class="text-muted">Last updated 3 mins ago</small>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
+                content. This card has even longer content than the first to show that equal height action.</p>
+            </div>
+            <div class="card-footer">
+              <small class="text-muted">Last updated 3 mins ago</small>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-      var mydata = JSON.parse("/Users/Albaba/Library/Mobile Documents/com~apple~CloudDocs/Coding Workplaces/Repos/PittPlanner/reqs.json");
+    var mydata = JSON.parse("/Users/Albaba/Library/Mobile Documents/com~apple~CloudDocs/Coding Workplaces/Repos/PittPlanner/reqs.json");
 
 
-        for (var element of mydata) 
-        {
-            document.write(element.name + "<br />");
-        }
+    for (var element of mydata) {
+      document.write(element.name + "<br />");
+    }
 
 
   </script>

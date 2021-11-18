@@ -1,36 +1,37 @@
 <%- include('partials/nav.ejs') %>
 
-<% if(errors) {%>
-<ul>
-    <% errors.forEach(function(err) { %>
-       <li> <%= err %> </li>
-    <% }); %> 
-   </ul>
-   <% } %>
 
-<div class="row">
-    <div class="col-md-6 mx-auto">
-        <div class="card card-body">
-            <h3 class="text-center">Account Register</h3>
-            <form action="/register" method="post">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control" required name="name" value="">
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" required name="email" value="">
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" required name="password" value="">
-                </div>
-                <div class="form-group">
-                    <label for="password2">Confirm Password</label>
-                    <input type="password" class="form-control" required name="password2" value="">
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+    <% if(errors) {%>
+        <div class="alert alert-danger text-center">
+            <% errors.forEach(function(err) { %>
+                <p>
+                    <%= err %>
+                </p>
+                <% }); %>
+                    </ul>
         </div>
-    </div>
-</div>
+
+        <% } %>
+
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <div class="card card-body">
+                        <h3 class="text-center">Account Register</h3>
+                        <form action="/register" method="post">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" required name="email" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" required name="password" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="password2">Confirm Password</label>
+                                <input type="password" class="form-control" required name="password2" value="">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
