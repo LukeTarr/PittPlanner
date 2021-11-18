@@ -2,11 +2,12 @@
 import express from "express";
 import mongoose from "mongoose";
 import { config } from "dotenv";
+<<<<<<< HEAD
 import { User } from './models/User.js';
 import bcrypt from 'bcryptjs';
-
-// old-style imports
-//var session = require('express-session')
+=======
+import fs from "fs";
+>>>>>>> b813ccbefc717a7165a4efacc78293839223ef8b
 
 
 // Init the app and express with some setup
@@ -90,6 +91,21 @@ app.post('/register', async (req, res) => {
     });
   }
 });
+
+app.get('/json', (req, res) => {
+
+
+  fs.readFile('reqs.json', (err, data) => {
+      if (err) throw err;
+      let student = JSON.parse(data);
+      student.forEach(element => {
+        console.log(element.name)
+      });
+  });
+  
+  console.log('This is after the read call');
+
+}); 
 
 app.get('/logout', (req, res) => {
   req.session.destroy();
