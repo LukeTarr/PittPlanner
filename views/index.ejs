@@ -1,42 +1,37 @@
-<%- include('partials/nav.ejs') %> 
+<%- include('partials/nav.ejs') %>
     <div class="row">
         <div class="col-md-6 mx-auto">
-            <% if(errors) {%>
-                <div class="alert alert-danger text-center">
-                    <% errors.forEach(function(err) { %>
+            <div class="card card-body">
+                <h3 class="text-center">Account Login</h3>
+                <form method="post" action="/">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" required name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" required name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                </form>
+            </div>
+            <div class="mt-3">
+                <% if(error) {%>
+                    <div class="alert alert-danger text-center">
                         <p>
-                            <%= err %>
+                            <%= error %>
                         </p>
-                        <% }); %>
-                            </ul>
-                </div>
+                    </div>
                 <% } %>
                 <% if(success) {%>
                     <div class="alert alert-primary text-center">
                         <p>
                             <%= success %>
                         </p>
-                        </ul>
                     </div>
-                    <% } %>
-                            <div class="card card-body">
-                                <h3 class="text-center">Account Login</h3>
-                                <form method="post" action="/">
-                                    <div class="form-group">
-                                        <label for="email">Email</label>
-                                        <input type="email" class="form-control" required name="email">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="password">Password</label>
-                                        <input type="password" class="form-control" required name="password">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
-                                </form>
-                            </div>
+                <% } %>
+            </div>
         </div>
     </div>
-
-
-    </body>
-
-    </html>
+</body>
+</html>

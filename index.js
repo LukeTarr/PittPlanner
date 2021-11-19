@@ -38,7 +38,7 @@ mongoose
   });
 
 app.get("/", (req, res) => {
-  res.render('index', { errors: null, success: null });
+  res.render('index', { error: null, success: null });
 });
 
 app.post('/', (req, res) => {
@@ -46,11 +46,22 @@ app.post('/', (req, res) => {
   User.findOne({email: req.body.email}).then(user => {
 
     if(user){
-      // check hashed password and start a session
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        if(err) {
+          res.render("index", {error: 'Failed to Authenticate', success: null});
+          return;
+        } 
+
+        if(result){
+          res.render('partials/requirement');
+        } else {
+          res.render('index', {error: 'Incorrect email and password combination', success: null});
+        }
+      });
 
     } else {
-      const err = [`No user with email: ${req.body.email}`];
-      res.render('index', {errors: err, success: null})
+      const err = [];
+      res.render('index', {error: `No user with email: ${req.body.email}`, success: null})
     }
 
   });
@@ -58,31 +69,23 @@ app.post('/', (req, res) => {
 
 //User Register Route
 app.get('/register', (req, res) => {
-  res.render('register', { errors: null });
+  res.render('register', { error: null });
 });
 
 app.post('/register', async (req, res) => {
-
-  // check for errors 
-  let errs = [];
-
   if (req.body.password != req.body.password2) {
-    errs.push('Passwords do not match');
+    res.render('register', { error: 'Passwords do not match.' });
+    return;
   }
 
-  if (errs.length > 0) {
-    res.render('register', { errors: errs })
-  } else {
     User.findOne({ email: req.body.email }).then(user => {
       if (user) {
-        errs.push('User with that email already exists');
-        res.render('register', { errors: errs })
+        res.render('register', { error: 'User with that email already exists' })
       } else {
         const newUser = new User({
           email: req.body.email,
           password: req.body.password
         });
-
         // generate a password hash so we aren't storing raw text password in db
         bcrypt.genSalt(10, (error, salt) => {
           bcrypt.hash(newUser.password, salt, (error, hash) => {
@@ -90,7 +93,7 @@ app.post('/register', async (req, res) => {
             newUser.password = hash;
             // save the user to db, return user to login page
             newUser.save().then(user => {
-              res.render('index', { errors: null, success: 'Successfully register, you can now log in' });
+              res.render('index', { error: null, success: 'Successfully register, you can now log in' });
             })
               .catch(error => {
                 console.log(error);
@@ -100,12 +103,11 @@ app.post('/register', async (req, res) => {
         });
       }
     });
-  }
-});
+  });
 
 app.get('/logout', (req, res) => {
   req.session.destroy();
-  res.redirect('/', { errors: null, success: 'Successfully logged out' });
+  res.redirect('/', { error: null, success: 'Successfully logged out' });
 });
 
 app.get('/dashboard', (req, res) => {

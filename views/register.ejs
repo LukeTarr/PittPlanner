@@ -1,18 +1,6 @@
 <%- include('partials/nav.ejs') %>
-
-
             <div class="row">
                 <div class="col-md-6 mx-auto">
-                <% if(errors) {%>
-                    <div class="alert alert-danger text-center">
-                        <% errors.forEach(function(err) { %>
-                            <p>
-                                <%= err %>
-                            </p>
-                            <% }); %>
-                                </ul>
-                    </div>
-                    <% } %>
                     <div class="card card-body">
                         <h3 class="text-center">Account Register</h3>
                         <form action="/register" method="post">
@@ -28,8 +16,19 @@
                                 <label for="password2">Confirm Password</label>
                                 <input type="password" class="form-control" required name="password2" value="">
                             </div>
-                            <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                            <button type="submit" class="btn btn-primary mt-3">Submit</button>
                         </form>
+                    </div>
+                    <div class="mt-3">
+                        <% if(error) {%>
+                            <div class="alert alert-danger text-center">
+                                <p>
+                                    <%= error %>
+                                </p>
+                        <% } %>
                     </div>
                 </div>
             </div>
+        </div>
+    </body>
+</html>
