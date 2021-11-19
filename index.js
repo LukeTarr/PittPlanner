@@ -41,13 +41,27 @@ app.get("/", (req, res) => {
   res.render('index', { errors: null, success: null });
 });
 
+app.post('/', (req, res) => {
+
+  User.findOne({email: req.body.email}).then(user => {
+
+    if(user){
+      // check hashed password and start a session
+
+    } else {
+      const err = [`No user with email: ${req.body.email}`];
+      res.render('index', {errors: err, success: null})
+    }
+
+  });
+});
+
 //User Register Route
 app.get('/register', (req, res) => {
   res.render('register', { errors: null });
 });
 
 app.post('/register', async (req, res) => {
-  const body = req.body;
 
   // check for errors 
   let errs = [];

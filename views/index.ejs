@@ -1,32 +1,27 @@
-<%- include('partials/nav.ejs') %>
-
-    <% if(errors) {%>
-        <div class="alert alert-primary text-center">
-            <% errors.forEach(function(err) { %>
-                <p>
-                    <%= err %>
-                </p>
-                <% }); %>
-                    </ul>
-        </div>
-
-        <% } %>
-
-            <% if(success) {%>
-                <div class="alert alert-primary text-center">
-                    <p>
-                        <%= success %>
-                    </p>
-                    </ul>
+<%- include('partials/nav.ejs') %> 
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <% if(errors) {%>
+                <div class="alert alert-danger text-center">
+                    <% errors.forEach(function(err) { %>
+                        <p>
+                            <%= err %>
+                        </p>
+                        <% }); %>
+                            </ul>
                 </div>
-
                 <% } %>
-
-                    <div class="row">
-                        <div class="col-md-6 mx-auto">
+                <% if(success) {%>
+                    <div class="alert alert-primary text-center">
+                        <p>
+                            <%= success %>
+                        </p>
+                        </ul>
+                    </div>
+                    <% } %>
                             <div class="card card-body">
                                 <h3 class="text-center">Account Login</h3>
-                                <form method="post" action="/users/login">
+                                <form method="post" action="/">
                                     <div class="form-group">
                                         <label for="email">Email</label>
                                         <input type="email" class="form-control" required name="email">
@@ -35,13 +30,13 @@
                                         <label for="password">Password</label>
                                         <input type="password" class="form-control" required name="password">
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
                                 </form>
                             </div>
-                        </div>
-                    </div>
+        </div>
+    </div>
 
 
-                    </body>
+    </body>
 
-                    </html>
+    </html>
