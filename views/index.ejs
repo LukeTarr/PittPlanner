@@ -3,7 +3,7 @@
         <div class="col-md-6 mx-auto">
             <div class="card card-body">
                 <h3 class="text-center">Account Login</h3>
-                <form method="post" action="/">
+                <form method="post" action="/login">
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" class="form-control" required name="email">
@@ -22,16 +22,17 @@
                             <%= error %>
                         </p>
                     </div>
-                <% } %>
-                <% if(success) {%>
-                    <div class="alert alert-primary text-center">
-                        <p>
-                            <%= success %>
-                        </p>
-                    </div>
-                <% } %>
+                    <% } %>
+                        <% if(success) {%>
+                            <div class="alert alert-primary text-center">
+                                <p>
+                                    <%= success %>
+                                </p>
+                            </div>
+                            <% } %>
             </div>
         </div>
     </div>
-</body>
-</html>
+    </body>
+
+    </html>
