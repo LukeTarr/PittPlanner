@@ -52,22 +52,29 @@ mongoose
     console.log(err.message);
   });
 
+// Auth middleware
+
 const auth = (req, res, next) => {
   if (req.session && req.session.userid) {
     return next();
   } else {
-    res.render("index", {
+    res.render("login", {
       error: "You must be loged in to view that page",
       success: null,
+      user: req.session.userid,
     });
   }
 };
 
 // routes
 
+app.get("/", (req, res) => {
+  res.render("index", { user: req.session.userid });
+});
+
 // Index Routes
 app.get("/login", (req, res) => {
-  res.render("index", { error: null, success: null });
+  res.render("login", { error: null, success: null, user: req.session.userid });
 });
 
 app.post("/login", (req, res) => {
@@ -75,9 +82,10 @@ app.post("/login", (req, res) => {
     if (user) {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (err) {
-          res.render("index", {
+          res.render("login", {
             error: "Failed to Authenticate",
             success: null,
+            user: req.session.userid,
           });
           return;
         }
@@ -86,18 +94,20 @@ app.post("/login", (req, res) => {
           req.session.userid = req.body.email;
           console.log(req.session);
           req.session.save();
-          res.render("partials/dashboard", { user: req.session.userid });
+          res.render("dashboard", { user: req.session.userid });
         } else {
-          res.render("index", {
+          res.render("login", {
             error: "Incorrect email and password combination",
             success: null,
+            user: req.session.userid,
           });
         }
       });
     } else {
-      res.render("index", {
+      res.render("login", {
         error: `No user with email: ${req.body.email}`,
         success: null,
+        user: req.session.userid,
       });
     }
   });
@@ -105,18 +115,24 @@ app.post("/login", (req, res) => {
 
 //User Register Routes
 app.get("/register", (req, res) => {
-  res.render("register", { error: null });
+  res.render("register", { error: null, user: req.session.userid });
 });
 
 app.post("/register", async (req, res) => {
   if (req.body.password != req.body.password2) {
-    res.render("register", { error: "Passwords do not match." });
+    res.render("register", {
+      error: "Passwords do not match.",
+      user: req.session.userid,
+    });
     return;
   }
 
   User.findOne({ email: req.body.email }).then((user) => {
     if (user) {
-      res.render("register", { error: "User with that email already exists" });
+      res.render("register", {
+        error: "User with that email already exists",
+        user: req.session.userid,
+      });
     } else {
       const newUser = new User({
         email: req.body.email,
@@ -131,9 +147,10 @@ app.post("/register", async (req, res) => {
           newUser
             .save()
             .then((user) => {
-              res.render("index", {
+              res.render("login", {
                 error: null,
                 success: "Successfully register, you can now log in",
+                user: req.session.userid,
               });
             })
             .catch((error) => {
@@ -150,7 +167,11 @@ app.post("/register", async (req, res) => {
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
-  res.render("index", { error: null, success: "Successfully logged out" });
+  res.render("login", {
+    error: null,
+    success: "Successfully logged out",
+    user: null,
+  });
 });
 
 // Content Routes
@@ -161,7 +182,7 @@ app.get("/dashboard", auth, (req, res) => {
   // compare person's classes to reqs
   // create a object that holds the progress of each req for this person
   // render our ejs with this object
-  res.render("partials/dashboard", { user: req.session.userid });
+  res.render("dashboard", { user: req.session.userid });
 });
 
 // Data routes (temp / dev)
