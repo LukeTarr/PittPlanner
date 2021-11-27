@@ -15,8 +15,13 @@
                     </div>
                     <div class="form-group">
                         <label for="requirement">Requirement Fullfilled</label>
-                        <input type="text" class="form-control" required name="requirement" value="">
-                    </div>
+                        <select class="form-control" id="requirement" required name="requirement" value="">  
+                            <% reqs.forEach(element => { %>
+                            <option value = "<%- element %>"><%- element %>  </option>
+                            <% }) %>   
+                        </select>
+                      </div>
+
                     <button type="submit" class="btn btn-primary mt-3">Submit</button>
                 </form>
             </div>

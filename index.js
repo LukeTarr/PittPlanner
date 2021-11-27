@@ -163,7 +163,16 @@ app.post("/register", async (req, res) => {
 });
 
 app.get("/class", auth, (req, res) => {
-  res.render("add", { user: req.session.userid });
+  fs.readFile("reqs.json", (err, data) => {
+    const vals = [];
+    JSON.parse(data).forEach(element => {
+      vals.push(element.name); 
+    })
+    res.render("add", {
+      user: req.session.userid,
+      reqs: vals
+    });
+  });
 });
 
 app.post("/class", auth, async (req, res) => {
