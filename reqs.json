@@ -16,11 +16,6 @@
         "req_type": "Major Requirement"
     },
     {
-        "name": "Programming Course",
-        "amount": 1,
-        "req_type": "Major Requirement"
-    },
-    {
         "name": "Upper Level Electives",
         "amount": 1,
         "req_type": "Major Requirement"

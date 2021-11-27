@@ -92,9 +92,8 @@ app.post("/login", (req, res) => {
 
         if (result) {
           req.session.userid = req.body.email;
-          console.log(req.session);
           req.session.save();
-          res.render("dashboard", { user: req.session.userid });
+          res.redirect("/dashboard");
         } else {
           res.render("login", {
             error: "Incorrect email and password combination",
@@ -163,9 +162,30 @@ app.post("/register", async (req, res) => {
   });
 });
 
+app.get("/class", auth, (req, res) => {
+  res.render("add", { user: req.session.userid });
+});
+
+app.post("/class", auth, async (req, res) => {
+  console.log(req.body);
+
+  // get user from database using userid
+  const tempUser = await User.findOne({ email: req.session.userid });
+  const newClass = req.body;
+  let classList = tempUser.classes;
+  classList.push(newClass);
+
+  const user = await User.findOneAndUpdate(
+    { email: req.session.userid },
+    { classes: classList }
+  );
+
+  res.redirect("dashboard");
+});
+
 // Auth Routes
 
-app.get("/logout", (req, res) => {
+app.get("/logout", auth, (req, res) => {
   req.session.destroy();
   res.render("login", {
     error: null,
@@ -176,24 +196,23 @@ app.get("/logout", (req, res) => {
 
 // Content Routes
 
-app.get("/dashboard", auth, (req, res) => {
+app.get("/dashboard", auth, async (req, res) => {
   // read reqs
+
   // read person
+  const tempUser = await User.findOne({ email: req.session.userid });
+  const classList = tempUser.classes;
+
+  console.log(tempUser);
   // compare person's classes to reqs
   // create a object that holds the progress of each req for this person
   // render our ejs with this object
-  res.render("dashboard", { user: req.session.userid });
-});
 
-// Data routes (temp / dev)
-
-app.get("/json", (req, res) => {
   fs.readFile("reqs.json", (err, data) => {
-    if (err) throw err;
-    let student = JSON.parse(data);
-    student.forEach((element) => {
-      console.log(element.name);
+    res.render("dashboard", {
+      user: req.session.userid,
+      reqs: JSON.parse(data),
+      classes: classList,
     });
   });
-  console.log("This is after the read call");
 });

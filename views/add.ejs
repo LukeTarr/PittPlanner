@@ -1,0 +1,26 @@
+<%- include('partials/nav.ejs') %>
+
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card card-body">
+                <h3 class="text-center">Add Class</h3>
+                <form action="/class" method="post">
+                    <div class="form-group">
+                        <label for="name">Class Name</label>
+                        <input type="text" class="form-control" required name="name" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="credits">Credits</label>
+                        <input type="number" class="form-control" required name="credits" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="requirement">Requirement Fullfilled</label>
+                        <input type="text" class="form-control" required name="requirement" value="">
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <% include('partials/footer.ejs') %>
