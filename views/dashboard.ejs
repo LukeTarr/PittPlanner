@@ -10,25 +10,26 @@
             <div class="col">
               <div class="card h-100">
                 <div class="card-body">
-                  <h5 class="card-title">
+                  <h5 class="card-title" id="<%-reqs[index].name%>" >
                     <%= reqs[index].name %>
                   </h5>
 
-                  <% for( let j=0; j < classes.length; j++ ) { %>
+                  <% 
+                    let counter = 0;
+                    for( let j=0; j < classes.length; j++ ) {  %>
 
-                    <% if (reqs[index].name===classes[j].requirement) { %>
+                    <% if (reqs[index].name===classes[j].requirement) { counter = counter + 1; %>
 
                       <div class="d-flex justify-content-between align-items-center">
                         <p class="mb-0">
                           <%= classes[j].name %>
                         </p>
                         <small class="text-muted">
-                          <%= classes[j].credits %>
+                          <%= classes[j].credits %> hrs
                         </small>
                       </div>
                       <% } %>
                         <% } %>
-
                 </div>
                 <div class="card-footer">
                   <small class="text-muted">
@@ -37,11 +38,10 @@
                 </div>
               </div>
             </div>
-            <% } %>
+            <% if (reqs[index].amount > counter) { %>
               <% } %>
-
-
-
+            <% } %>
+          <% } %>
       </div>
     </div>
   </div>
