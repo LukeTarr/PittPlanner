@@ -175,6 +175,19 @@ app.get("/class", auth, (req, res) => {
   });
 });
 
+app.post("/remove", auth, async (req, res) => {
+  console.log(req.body);
+  const tempUser = await User.findOne({ email: req.session.userid });
+  let classList = tempUser.classes;
+  classList = classList.filter(e => e.name !== req.body.class);
+
+  const user = await User.findOneAndUpdate(
+    {email: req.session.userid},
+    {classes: classList}
+  )
+  res.redirect("/dashboard");
+});
+
 app.post("/class", auth, async (req, res) => {
   console.log(req.body);
 
@@ -206,17 +219,9 @@ app.get("/logout", auth, (req, res) => {
 // Content Routes
 
 app.get("/dashboard", auth, async (req, res) => {
-  // read reqs
 
-  // read person
   const tempUser = await User.findOne({ email: req.session.userid });
   const classList = tempUser.classes;
-
-  console.log(tempUser);
-  // compare person's classes to reqs
-  // create a object that holds the progress of each req for this person
-  // render our ejs with this object
-
   fs.readFile("reqs.json", (err, data) => {
     res.render("dashboard", {
       user: req.session.userid,

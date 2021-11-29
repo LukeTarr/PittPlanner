@@ -64,9 +64,14 @@
                         <p class="mb-0">
                           <%= classes[j].name %>
                         </p>
-                        <small class="text-muted">
+                        <form action="/remove" method="post">
+                          <small class="text-muted">
                           <%= classes[j].credits %> hrs
+                          <span class="glyphicon glyphicon-remove"></span>
                         </small>
+                        <input type="hidden" id="class" name="class" value="<%= classes[j].name %>">
+                        <button class="mt-1 btn" type="submit">X</button>
+                          </form>
                       </div>
                       <% } %>
                         <% } %>
