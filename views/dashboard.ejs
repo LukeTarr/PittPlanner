@@ -1,40 +1,40 @@
 <%- include('partials/nav.ejs') %>
-<style>
-  .text-muted-green{
+  <style>
+    .text-muted-green {
       opacity: 1;
-      color: rgba(10,90,10);
-  }
-  .text-muted-red{
+      color: rgba(10, 90, 10);
+    }
+
+    .text-muted-red {
       opacity: 1;
       color: rgb(91, 10, 38);
-  }
-</style>
+    }
+  </style>
 
   <div class="album py-5 bg-light">
     <div class="container">
       <div class="row row-cols-1 row-cols-md-2 g-20">
         <div class="col">
           <div class="jumbotron">
-              <h1 class="display-4">Degree Progress</h1>
-              <div class="progress" id = "progress" style="height: 2em;">
-              </div>
+            <h1 class="display-4">Degree Progress</h1>
+            <div class="progress" id="progress" style="height: 2em;">
+            </div>
           </div>
         </div>
         <div class="col">
-          <div class="jumbotron" >
-              <h1 class="display-4">Summary</h1>
-              <div class="row row-cols-1 row-cols-md-2 g-20">
-                <div class="col">
-                  <p class="lead">
-                  <%
-                    let credit = 0; 
-                    classes.forEach(element => {
+          <div class="jumbotron">
+            <h1 class="display-4">Summary</h1>
+            <div class="row row-cols-1 row-cols-md-2 g-20">
+              <div class="col">
+                <p class="lead">
+                  <% let credit=0; classes.forEach(element=> {
                     credit = credit + parseInt(element.credits);
-                  }); %> <%- credit %>  Credit Hours Complete</p>
-                </div>
-                <div class="col" id = "summary-tron">
-                </div>
+                    }); %> <%- credit %> Credit Hours Complete
+                </p>
               </div>
+              <div class="col" id="summary-tron">
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -43,22 +43,18 @@
       <div class="row row-cols-1 row-cols-md-3 g-4">
 
 
-        <% 
-        let req_satified_counter = 0;
-        if (reqs) { %>
+        <% let req_satified_counter=0; if (reqs) { %>
           <% for( let index=0; index < reqs.length; index++ ) { %>
 
             <div class="col">
               <div class="card h-100">
                 <div class="card-body">
-                  <h5 class="card-title" id="<%-reqs[index].name%>" >
+                  <h5 class="card-title" id="<%-reqs[index].name%>">
                     <%= reqs[index].name %>
                   </h5>
-                  <% 
-                    let counter = 0;
-                    for( let j=0; j < classes.length; j++ ) {  %>
+                  <% let counter=0; for( let j=0; j < classes.length; j++ ) { %>
 
-                    <% if (reqs[index].name===classes[j].requirement) { counter = counter + 1; %>
+                    <% if (reqs[index].name===classes[j].requirement) { counter=counter + 1; %>
 
                       <div class="d-flex justify-content-between align-items-center">
                         <p class="mb-0">
@@ -66,49 +62,53 @@
                         </p>
                         <form action="/remove" method="post">
                           <small class="text-muted">
-                          <%= classes[j].credits %> hrs
-                          <span class="glyphicon glyphicon-remove"></span>
-                        </small>
-                        <input type="hidden" id="class" name="class" value="<%= classes[j].name %>">
-                        <button class="mt-0 btn" type="submit"><i class="bi bi-trash"></i></button>
-                          </form>
+                            <%= classes[j].credits %> hrs
+                              <span class="glyphicon glyphicon-remove"></span>
+                          </small>
+                          <input type="hidden" id="class" name="class" value="<%= classes[j].name %>">
+                          <button class="mt-0 btn" type="submit"><i class="bi bi-trash"></i></button>
+                        </form>
                       </div>
                       <% } %>
                         <% } %>
                 </div>
-                <% if (reqs[index].amount > counter) { %>
-                  <div class="card-footer" style = "background-color: rgba(91, 10, 38, 0.2);">
+                <% if (reqs[index].amount> counter) { %>
+                  <div class="card-footer" style="background-color: rgba(91, 10, 38, 0.2);">
                     <small class="text-muted-red">
                       Incomplete: <%= counter %>/ <%= reqs[index].amount %> Classes Required
                     </small>
                   </div>
-                <% } else{ 
-                  req_satified_counter = req_satified_counter + 1;%>
-                  <div class="card-footer" style = "background-color: rgba(10,90,10,.2)">
-                  <small class="text-muted-green">
-                    Requirement Satisfied: <%= reqs[index].amount %> Classes Required
-                  </small>
-                </div>
+                  <% } else{ req_satified_counter=req_satified_counter + 1;%>
+                    <div class="card-footer" style="background-color: rgba(10,90,10,.2)">
+                      <small class="text-muted-green">
+                        Requirement Satisfied: <%= reqs[index].amount %> Classes Required
+                      </small>
+                    </div>
 
-                <% } %>
+                    <% } %>
 
               </div>
             </div>
 
             <% } %>
-          <% } %>
+              <% } %>
 
-          <div class="progress-bar bg-info" id = "progress-inner" role="progressbar" style="width: <%=100 * (req_satified_counter/reqs.length)%>%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-            <%=Math.round(100 * (req_satified_counter/reqs.length))%> %</div>
-          <p class="lead" id = "summary"> <%=req_satified_counter%> Requirments Satisfied</p>
-          <script>
-            var progress_parent = document.getElementById("progress");
-            var progress_child = document.getElementById("progress-inner");
-            progress_parent.appendChild(progress_child);
-            var progress_parent = document.getElementById("summary-tron");
-            var progress_child = document.getElementById("summary");
-            progress_parent.appendChild(progress_child);
-            </script>
+                <div class="progress-bar bg-info" id="progress-inner" role="progressbar"
+                  style="width: <%=100 * (req_satified_counter/reqs.length)%>%" aria-valuenow="25" aria-valuemin="0"
+                  aria-valuemax="100">
+                  <%=Math.round(100 * (req_satified_counter/reqs.length))%> %
+                </div>
+                <p class="lead" id="summary">
+                  <%=req_satified_counter%> Requirments Satisfied
+                </p>
+                <script>
+                  var progress_parent = document.getElementById("progress");
+                  var progress_child = document.getElementById("progress-inner");
+                  progress_parent.appendChild(progress_child);
+                  var progress_parent = document.getElementById("summary-tron");
+                  var progress_child = document.getElementById("summary");
+                  progress_parent.appendChild(progress_child);
+                </script>
 
       </div>
       <br>
@@ -116,7 +116,11 @@
     </div>
   </div>
 
-  <% include('partials/footer.ejs') %>
-    </body>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
 
-    </html>
+
+  </body>
+
+  </html>

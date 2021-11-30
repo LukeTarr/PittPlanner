@@ -1,6 +1,6 @@
 <%- include('partials/nav.ejs') %>
 
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-md-6 mx-auto">
             <div class="card card-body">
                 <h3 class="text-center">Add Class</h3>
@@ -15,12 +15,14 @@
                     </div>
                     <div class="form-group">
                         <label for="requirement">Requirement Fullfilled</label>
-                        <select class="form-control" id="requirement" required name="requirement" value="">  
-                            <% reqs.forEach(element => { %>
-                            <option value = "<%- element %>"><%- element %>  </option>
-                            <% }) %>   
+                        <select class="form-control" id="requirement" required name="requirement" value="">
+                            <% reqs.forEach(element=> { %>
+                                <option value="<%- element %>">
+                                    <%- element %>
+                                </option>
+                                <% }) %>
                         </select>
-                      </div>
+                    </div>
 
                     <button type="submit" class="btn btn-primary mt-3">Submit</button>
                 </form>
@@ -28,4 +30,10 @@
         </div>
     </div>
 
-    <% include('partials/footer.ejs') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    </body>
+
+    </html>

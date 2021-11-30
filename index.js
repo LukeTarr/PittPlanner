@@ -165,33 +165,29 @@ app.post("/register", async (req, res) => {
 app.get("/class", auth, (req, res) => {
   fs.readFile("reqs.json", (err, data) => {
     const vals = [];
-    JSON.parse(data).forEach(element => {
-      vals.push(element.name); 
-    })
+    JSON.parse(data).forEach((element) => {
+      vals.push(element.name);
+    });
     res.render("add", {
       user: req.session.userid,
-      reqs: vals
+      reqs: vals,
     });
   });
 });
 
 app.post("/remove", auth, async (req, res) => {
-  console.log(req.body);
   const tempUser = await User.findOne({ email: req.session.userid });
   let classList = tempUser.classes;
-  classList = classList.filter(e => e.name !== req.body.class);
+  classList = classList.filter((e) => e.name !== req.body.class);
 
   const user = await User.findOneAndUpdate(
-    {email: req.session.userid},
-    {classes: classList}
-  )
+    { email: req.session.userid },
+    { classes: classList }
+  );
   res.redirect("/dashboard");
 });
 
 app.post("/class", auth, async (req, res) => {
-  console.log(req.body);
-
-  // get user from database using userid
   const tempUser = await User.findOne({ email: req.session.userid });
   const newClass = req.body;
   let classList = tempUser.classes;
@@ -201,7 +197,6 @@ app.post("/class", auth, async (req, res) => {
     { email: req.session.userid },
     { classes: classList }
   );
-
   res.redirect("dashboard");
 });
 
@@ -219,7 +214,6 @@ app.get("/logout", auth, (req, res) => {
 // Content Routes
 
 app.get("/dashboard", auth, async (req, res) => {
-
   const tempUser = await User.findOne({ email: req.session.userid });
   const classList = tempUser.classes;
   fs.readFile("reqs.json", (err, data) => {
