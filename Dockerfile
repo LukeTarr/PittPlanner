@@ -1,7 +1,9 @@
-FROM node
+FROM node:24-bookworm-slim
 WORKDIR /app
-COPY package.json /app
-RUN npm install
-COPY . /app
+ENV NODE_ENV=production
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY --chown=node:node . .
+USER node
 EXPOSE 4444
-CMD ["npm","start"]
+CMD ["node", "index.js"]

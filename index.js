@@ -1,226 +1,94 @@
-// imports
-import fs from "fs";
-import express from "express";
-import mongoose from "mongoose";
-import sessions from "express-session";
-import bcrypt from "bcryptjs";
+import { pathToFileURL } from "node:url";
 import { config } from "dotenv";
+import mongoose from "mongoose";
+import MongoStore from "connect-mongo";
+import { createApp } from "./app.js";
+import { readConfig } from "./config.js";
 
-//Model imports
-import { User } from "./models/User.js";
-import session from "express-session";
+export async function startServer(env = process.env) {
+  const { mongoUri, sessionSecret, port } = readConfig(env);
 
-// Init the app and express with some setup
-const app = express();
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+  // Use current Mongoose defaults explicitly; never buffer requests while offline.
+  mongoose.set("strictQuery", false);
+  mongoose.set("bufferCommands", false);
 
-//ejs setup
-app.set("view engine", "ejs");
-app.set("views", "./views");
-
-// Call config so we can access the env vars
-config();
-
-// Set up express-sessions to handle auth
-app.use(
-  sessions({
-    // Set a secret to encode our sessions with
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
-    // set the cookies max age to 24 hours (in ms)
-    cookie: { maxAge: 86400000, secure: false, httpOnly: false },
-    resave: false,
-  })
-);
-
-const PORT = process.env.PORT || 4444;
-
-//Connect to the mongoDB with the env var connection string
-mongoose
-  .connect(process.env.MONGO_CONNECTION_STRING, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() =>
-    // If no errors connecting to db, start listening to handle requests
-    app.listen(PORT, () => {
-      console.log("Server running on:", PORT);
-    })
-  )
-  .catch((err) => {
-    console.log(err.message);
-  });
-
-// Auth middleware
-
-const auth = (req, res, next) => {
-  if (req.session && req.session.userid) {
-    return next();
-  } else {
-    res.render("login", {
-      error: "You must be loged in to view that page",
-      success: null,
-      user: req.session.userid,
-    });
-  }
-};
-
-// routes
-
-app.get("/", (req, res) => {
-  res.render("index", { user: req.session.userid });
-});
-
-// Index Routes
-app.get("/login", (req, res) => {
-  res.render("login", { error: null, success: null, user: req.session.userid });
-});
-
-app.post("/login", (req, res) => {
-  User.findOne({ email: req.body.email }).then((user) => {
-    if (user) {
-      bcrypt.compare(req.body.password, user.password, (err, result) => {
-        if (err) {
-          res.render("login", {
-            error: "Failed to Authenticate",
-            success: null,
-            user: req.session.userid,
-          });
-          return;
-        }
-
-        if (result) {
-          req.session.userid = req.body.email;
-          req.session.save();
-          res.redirect("/dashboard");
-        } else {
-          res.render("login", {
-            error: "Incorrect email and password combination",
-            success: null,
-            user: req.session.userid,
-          });
-        }
-      });
-    } else {
-      res.render("login", {
-        error: `No user with email: ${req.body.email}`,
-        success: null,
-        user: req.session.userid,
-      });
-    }
-  });
-});
-
-//User Register Routes
-app.get("/register", (req, res) => {
-  res.render("register", { error: null, user: req.session.userid });
-});
-
-app.post("/register", async (req, res) => {
-  if (req.body.password != req.body.password2) {
-    res.render("register", {
-      error: "Passwords do not match.",
-      user: req.session.userid,
-    });
-    return;
+  try {
+    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 10000 });
+  } catch {
+    await mongoose.disconnect();
+    // Driver errors can contain credentials, so do not log the URI or raw error.
+    throw new Error(
+      "Unable to connect to MongoDB. Check MONGO_CONNECTION_STRING, that the server is running, " +
+        "and your database credentials/network access. For querySrv ENOTFOUND, the Atlas hostname " +
+        "has no DNS SRV record: copy the URI from an active Atlas cluster (Connect > Drivers) " +
+        "or use local MongoDB. See README.md."
+    );
   }
 
-  User.findOne({ email: req.body.email }).then((user) => {
-    if (user) {
-      res.render("register", {
-        error: "User with that email already exists",
-        user: req.session.userid,
+  try {
+    const sessionStore = MongoStore.create({ client: mongoose.connection.getClient() });
+    sessionStore.on("error", () => console.error("MongoDB session store error."));
+    // Finish creating the TTL index before accepting traffic or closing the client.
+    await sessionStore.collectionP.catch(() => {
+      throw new Error("Unable to initialize MongoDB session storage. Check database permissions.");
+    });
+    const app = createApp({ sessionSecret, sessionStore });
+    const server = await new Promise((resolve, reject) => {
+      const listener = app.listen(port, (error) => {
+        if (error) reject(error);
+        else resolve(listener);
       });
-    } else {
-      const newUser = new User({
-        email: req.body.email,
-        password: req.body.password,
-      });
-      // generate a password hash so we aren't storing raw text password in db
-      bcrypt.genSalt(10, (error, salt) => {
-        bcrypt.hash(newUser.password, salt, (error, hash) => {
-          if (error) throw error;
-          newUser.password = hash;
-          // save the user to db, return user to login page
-          newUser
-            .save()
-            .then((user) => {
-              res.render("login", {
-                error: null,
-                success: "Successfully register, you can now log in",
-                user: req.session.userid,
-              });
-            })
-            .catch((error) => {
-              console.log(error);
-              return;
-            });
+    });
+
+    const close = async () => {
+      try {
+        await new Promise((resolve, reject) => {
+          server.close((error) => (error ? reject(error) : resolve()));
         });
-      });
+      } finally {
+        await mongoose.disconnect();
+      }
+    };
+
+    return { app, server, close };
+  } catch (error) {
+    await mongoose.disconnect();
+    if (error.code === "EADDRINUSE") {
+      throw new Error(`Port ${port} is already in use. Stop the other server or change PORT.`);
     }
-  });
-});
+    throw error;
+  }
+}
 
-app.get("/class", auth, (req, res) => {
-  fs.readFile("reqs.json", (err, data) => {
-    const vals = [];
-    JSON.parse(data).forEach((element) => {
-      vals.push(element.name);
-    });
-    res.render("add", {
-      user: req.session.userid,
-      reqs: vals,
-    });
-  });
-});
+async function main() {
+  config({ quiet: true });
+  try {
+    const { server, close } = await startServer();
+    console.log(`PittPlanner running on port ${server.address().port}`);
 
-app.post("/remove", auth, async (req, res) => {
-  const tempUser = await User.findOne({ email: req.session.userid });
-  let classList = tempUser.classes;
-  classList = classList.filter((e) => e.name !== req.body.class);
+    let stopping = false;
+    const shutdown = async () => {
+      if (stopping) return;
+      stopping = true;
+      const timeout = setTimeout(() => process.exit(1), 10000);
+      timeout.unref();
+      try {
+        await close();
+      } catch {
+        console.error("Failed to shut down cleanly.");
+        process.exitCode = 1;
+      } finally {
+        clearTimeout(timeout);
+      }
+    };
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
+  } catch (error) {
+    console.error(`Startup failed: ${error.message}`);
+    process.exitCode = 1;
+  }
+}
 
-  const user = await User.findOneAndUpdate(
-    { email: req.session.userid },
-    { classes: classList }
-  );
-  res.redirect("/dashboard");
-});
-
-app.post("/class", auth, async (req, res) => {
-  const tempUser = await User.findOne({ email: req.session.userid });
-  const newClass = req.body;
-  let classList = tempUser.classes;
-  classList.push(newClass);
-
-  const user = await User.findOneAndUpdate(
-    { email: req.session.userid },
-    { classes: classList }
-  );
-  res.redirect("dashboard");
-});
-
-// Auth Routes
-
-app.get("/logout", auth, (req, res) => {
-  req.session.destroy();
-  res.render("login", {
-    error: null,
-    success: "Successfully logged out",
-    user: null,
-  });
-});
-
-// Content Routes
-
-app.get("/dashboard", auth, async (req, res) => {
-  const tempUser = await User.findOne({ email: req.session.userid });
-  const classList = tempUser.classes;
-  fs.readFile("reqs.json", (err, data) => {
-    res.render("dashboard", {
-      user: req.session.userid,
-      reqs: JSON.parse(data),
-      classes: classList,
-    });
-  });
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  await main();
+}
