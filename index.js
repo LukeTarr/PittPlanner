@@ -12,8 +12,10 @@ export async function startServer(env = process.env) {
   mongoose.set("strictQuery", false);
   mongoose.set("bufferCommands", false);
 
+  // Label the app's connections so self-hosted MongoDB logs can tell them
+  // apart from other clients (healthchecks, shells) on the same network.
   try {
-    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 10000 });
+    await mongoose.connect(mongoUri, { appName: "pittplanner", serverSelectionTimeoutMS: 10000 });
   } catch {
     await mongoose.disconnect();
     // Driver errors can contain credentials, so do not log the URI or raw error.

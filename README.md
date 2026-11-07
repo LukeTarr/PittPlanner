@@ -89,6 +89,11 @@ Existing users and classes are retained when you connect to the same database; n
 - **`strictQuery` deprecation warning**: this came from Mongoose 6. The app now uses Mongoose 9 with an explicit `strictQuery` setting and no obsolete driver options.
 - **Connection refused or server selection timeout**: check that MongoDB is running and reachable; for Atlas, also check credentials and the IP access list.
 - **Missing configuration**: the app validates `MONGO_CONNECTION_STRING`, `SESSION_SECRET`, and `PORT` before connecting. It exits with a nonzero status and an actionable message on failure, rather than leaving an unusable process running. Database server selection is limited to 10 seconds (DNS resolution also depends on the system resolver).
+- **Repeated `Connection not authenticating` / `client metadata` logs on a self-hosted MongoDB**: check the `doc` attribute to see which client keeps connecting. PittPlanner connects once at startup as driver `nodejs|Mongoose` with application name `pittplanner`. If the repeating lines instead report `application.name` of `mongosh ...` and open several short-lived connections every few seconds, a different client is looping — usually a `mongosh`-based healthcheck inside the database's own container (the official `mongo` Docker image and some hosting templates like Coolify ship one). Each run starts a fresh Node process, which is what spikes CPU. Confirm and fix on the server side:
+  1. Find which container holds the client IP shown in the logs: `docker network inspect <network>`.
+  2. Inspect that container's healthcheck: `docker inspect -f '{{json .Config.Healthcheck}}' <container>`, or its template in your host's control panel.
+  3. Change it to an authenticated one, e.g. `mongosh "mongodb://user:pass@localhost:27017/admin?authSource=admin" --eval "db.adminCommand('ping')" --quiet`, and/or run it less frequently, or drop a `mongosh --eval` probe that runs per request.
+  4. To hide the informational connection-health log lines (the `s: I` `ACCESS`/`NETWORK` messages) entirely, start `mongod` with `--setParameter enableDetailedConnectionHealthMetricLogLines=false`, or set the same parameter under `setParameter` in `mongod.conf`.
 
 ## Verification
 

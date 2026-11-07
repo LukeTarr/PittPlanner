@@ -80,6 +80,12 @@ after(async () => {
   await database?.stop();
 });
 
+test("labels its MongoDB connections so they are identifiable in server logs", () => {
+  // A "Connection not authenticating"/"client metadata" log with
+  // application.name "mongosh" therefore comes from another client, not this app.
+  assert.equal(mongoose.connection.client.options.appName, "pittplanner");
+});
+
 test("renders public pages and serves the updated CSS, JavaScript, and icons locally", async () => {
   for (const path of ["/", "/login", "/register"]) {
     const response = await request(runtime.server).get(path).expect(200);
