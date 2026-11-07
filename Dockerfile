@@ -6,4 +6,4 @@ RUN npm ci --omit=dev
 COPY --chown=node:node . .
 USER node
 EXPOSE 4444
-CMD ["node", "index.js"]
+CMD ["node", "index.ts"]

@@ -1,4 +1,10 @@
-export function readConfig(env = process.env) {
+export interface AppConfig {
+  mongoUri: string;
+  sessionSecret: string;
+  port: number;
+}
+
+export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const mongoUri = env.MONGO_CONNECTION_STRING?.trim();
   if (!mongoUri || !/^mongodb(?:\+srv)?:\/\/\S+$/.test(mongoUri)) {
     throw new Error(

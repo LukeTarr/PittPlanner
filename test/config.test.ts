@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { readConfig } from "../config.js";
+import { readConfig } from "../config.ts";
 
 const valid = {
   MONGO_CONNECTION_STRING: "mongodb://127.0.0.1:27017/pittplanner",

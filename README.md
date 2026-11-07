@@ -72,7 +72,7 @@ Keep `PORT=4444` for this port mapping. Inside a container, `127.0.0.1` refers t
    For example, a MongoDB user created in the `admin` authentication database would use `mongodb://USERNAME:URL_ENCODED_PASSWORD@MONGODB_INTERNAL_HOST:27017/pittplanner?authSource=admin`. Use the hostname and authentication settings from your actual MongoDB resource, and URL-encode special characters in credentials. The URI must be reachable from the app container.
 4. Set the app's **Ports Exposes** to `4444`, configure your domain, and deploy. Coolify builds the Dockerfile and routes traffic to the app. If you enable an HTTP health check, use `GET /` on port `4444`.
 
-The Dockerfile supplies the start command (`node index.js`) and production mode. No build-time database connection or `.env` file in the image is needed. Use the same MongoDB URI and session secret on redeployment to retain data and login sessions.
+The Dockerfile supplies the start command (`node index.ts`) and production mode. No build-time database connection or `.env` file in the image is needed. Use the same MongoDB URI and session secret on redeployment to retain data and login sessions.
 
 ### Use MongoDB Atlas
 
@@ -98,6 +98,6 @@ npm test
 npm audit
 ```
 
-This is a server-rendered JavaScript app, so there is no compilation/build step. `check` validates JavaScript syntax; the integration tests render the EJS pages and exercise real database operations, session persistence, startup failures, and shutdown.
+This is a server-rendered TypeScript app. Node.js 24 runs `.ts` files directly (native type stripping), so there is no compilation/build step. `check` (`tsc --noEmit`) validates every type in the codebase; the integration tests render the EJS pages and exercise real database operations, session persistence, startup failures, and shutdown.
 
 Tests use `mongodb-memory-server-core` to start an isolated, temporary MongoDB process. On the first run it downloads a MongoDB binary, so internet access is required. It never connects to your `.env` database. If needed, use `MONGOMS_SYSTEM_BINARY=/path/to/mongod` to supply a compatible installed binary.
