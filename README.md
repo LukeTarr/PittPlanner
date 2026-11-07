@@ -44,15 +44,35 @@ npm start
 
 Open **http://localhost:4444**. Register an account, log in, and add classes from the dashboard. `PORT` defaults to `4444`. Use `npm run dev` for Node's built-in watch mode.
 
-### Run the whole app with Docker Compose
+## Deploy as a standalone container
 
-Create `.env` and set a generated `SESSION_SECRET` as above, then run:
+The repository's `Dockerfile` builds a single application container using Node.js 24 and runs it as a non-root user. MongoDB is hosted separately; supply its connection string at runtime. The app stores users, classes, and sessions in that database, so the app container does not need a persistent volume.
+
+Create `.env` as above and set `MONGO_CONNECTION_STRING` to a database reachable from the container, then build and run:
 
 ```sh
-docker compose up --build
+docker build -t pittplanner .
+docker run -d --name pittplanner --restart unless-stopped --env-file .env -p 4444:4444 pittplanner
 ```
 
-Compose supplies the internal MongoDB URI automatically and waits for MongoDB to be healthy before starting the app. It stores users, classes, and sessions in a named volume. `docker compose down` stops the services and retains the data; adding `-v` deletes it. The database is not exposed to the host in this setup.
+Keep `PORT=4444` for this port mapping. Inside a container, `127.0.0.1` refers to the app container itself: use your MongoDB service's reachable hostname rather than the local-development URI in `.env.example`. If MongoDB is on a private Docker network, attach the app with `--network <database-network>`. Secrets are passed at runtime; `.env` files are excluded from the image.
+
+### Deploy on Coolify
+
+1. Create an application from this repository and select the **Dockerfile** build pack. Use the repository root as the base directory and `/Dockerfile` as the Dockerfile location.
+2. Create or select your separately hosted MongoDB resource in Coolify and start it. Ensure the app and database share a Docker network so the app can resolve and reach the database's internal hostname.
+3. Add these **runtime environment variables** to the app in Coolify:
+
+   | Variable | Value |
+   | --- | --- |
+   | `MONGO_CONNECTION_STRING` | The MongoDB resource's internal connection URI, including the `pittplanner` database name and credentials. |
+   | `SESSION_SECRET` | A generated random secret (use the command in **Run locally**); keep it stable across deployments. |
+   | `PORT` | `4444` |
+
+   For example, a MongoDB user created in the `admin` authentication database would use `mongodb://USERNAME:URL_ENCODED_PASSWORD@MONGODB_INTERNAL_HOST:27017/pittplanner?authSource=admin`. Use the hostname and authentication settings from your actual MongoDB resource, and URL-encode special characters in credentials. The URI must be reachable from the app container.
+4. Set the app's **Ports Exposes** to `4444`, configure your domain, and deploy. Coolify builds the Dockerfile and routes traffic to the app. If you enable an HTTP health check, use `GET /` on port `4444`.
+
+The Dockerfile supplies the start command (`node index.js`) and production mode. No build-time database connection or `.env` file in the image is needed. Use the same MongoDB URI and session secret on redeployment to retain data and login sessions.
 
 ### Use MongoDB Atlas
 
